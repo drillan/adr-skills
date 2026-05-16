@@ -14,3 +14,15 @@ jobs:
       - run: uv run ruff format --check .
       - run: uv run mypy .
       - run: uv run pytest -v
+
+  apm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: microsoft/apm-action@v1
+        with:
+          setup-only: true
+      - name: Audit shipped skill files for hidden Unicode
+        run: |
+          find skills -type f \( -name '*.md' -o -name '*.py' \) -print0 \
+            | xargs -0 -n1 apm audit --file
