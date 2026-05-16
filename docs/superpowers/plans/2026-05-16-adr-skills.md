@@ -858,6 +858,8 @@ from adrlib import AdrError, find_adr, read_adr, write_adr
 
 def supersede(*, adr_dir: Path, number: str, by: str) -> None:
     """ADR-`number` を ADR-`by` で supersede する。"""
+    if number == by:
+        raise AdrError(f"ADR-{number} は自分自身を supersede できません。")
     old_path = find_adr(adr_dir, number)
     new_path = find_adr(adr_dir, by)
     old_fm, old_body = read_adr(old_path)
