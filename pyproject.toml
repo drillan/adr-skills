@@ -29,3 +29,4 @@ target-version = "py313"
 python_version = "3.13"
 strict = true
 files = ["skills/adr-author/scripts", "tests"]
+exclude = ["skills/adr-init/templates/"]
