@@ -218,3 +218,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Claude Code project skills (apm-installed or symlinked dogfood copies)
+.claude/
