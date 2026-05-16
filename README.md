@@ -13,9 +13,9 @@ ADR (Architecture Decision Record) を合意ベースで起草・管理するス
 
 ## アーキテクチャ
 
-**第 1 層 — 決定的スクリプト群** (`skills/adr-author/scripts/`)
+### 第 1 層: 決定的スクリプト群
 
-ファイル操作・採番・ステータス遷移をべき等かつ引数完結で実行します。スキルがこれらを呼び出します。
+`skills/adr-author/scripts/` にあるスクリプト群です。ファイル操作・採番・ステータス遷移をべき等かつ引数完結で実行します。スキルがこれらを呼び出します。
 
 | スクリプト | 役割 |
 |---|---|
@@ -26,21 +26,68 @@ ADR (Architecture Decision Record) を合意ベースで起草・管理するス
 
 共有ライブラリ `adrlib.py` が採番・フロントマター解析／書き込みを提供し、上記スクリプトはこれを利用します。
 
-**第 2 層 — スキル**
+### 第 2 層: スキル
 
-`adr-author` が決定の抽出・起草・ユーザーへのプレビュー提示・合意取得を担います。合意が得られた後にのみ第 1 層スクリプトを実行します。**合意なしにファイルを生成・変更しない**ことがこのスキルの核心です。
+`adr-author` が決定の抽出・起草・プレビュー提示・合意取得を担います。第 1 層スクリプトを実行するのは合意が得られた後だけです。合意のないままファイルを生成・変更することはありません。
 
-## インストール
+## 導入・更新・削除
 
-[APM](https://github.com/drillan/apm) を使って導入します。
+[APM](https://github.com/drillan/apm) でスキルを導入・更新・削除します。いずれも APM CLI が必要です（未導入の場合は `curl -sSL https://aka.ms/apm-unix | sh`）。
+
+### インストール
 
 ```bash
 apm install drillan/adr-skills --target claude
 ```
 
-## ADR のベストプラクティス
+`--target` は配置先のエージェントです（`claude` / `copilot` / `codex` / `cursor` / `gemini` など、カンマ区切りで複数指定できます）。複数のプロジェクトで使い回す場合は `-g`（ユーザースコープ）を付けます。
 
-- **1 ADR = 1 決定。** 複数の独立した決定は別々の ADR に分ける。
-- **Accepted 後の ADR は不変。** 変更が必要になったら新しい ADR を起こして supersede する。
-- **代替案とトレードオフを正直に記録する。** 採用案だけでなく、検討した選択肢と却下の根拠も必ず書く。
-- **ステータス遷移は前進のみ。** `Proposed → Accepted`、`Proposed → Deprecated`、`Accepted → Deprecated` のみ許可される。`Superseded` は別 ADR で置き換える際に `supersede` 操作で付与する。逆方向の遷移は行わない。
+本番運用や CI では、意図しない更新を防ぐためにバージョンを固定します。リリース tag または commit SHA を `#` の後に指定します。
+
+```bash
+apm install drillan/adr-skills#<tag> --target claude
+```
+
+### 更新
+
+更新できるかを確認してから更新します。
+
+```bash
+apm outdated   # 更新可能なパッケージを一覧表示
+apm update     # apm.lock.yaml を再生成し、スキルを最新版で再配置
+```
+
+バージョンを固定した依存は `apm update` の対象外です。バージョンを上げるときは `apm.yml` の固定表記を書き換えてから `apm install` し直します。更新後は `apm audit --ci` でセキュリティ検証を行えます。
+
+### アンインストール
+
+削除は破壊的な操作です。`--dry-run` で対象を確認してから実行します。
+
+```bash
+apm uninstall drillan/adr-skills --dry-run   # 削除されるファイルを事前表示
+apm uninstall drillan/adr-skills             # apm.yml・apm.lock.yaml と配置済みファイルを同期削除
+```
+
+ユーザースコープに導入したものは、`-g` を付けて削除します。
+
+## 利用方法
+
+2 つのスキルは、エージェント（Claude Code など）との会話の文脈に応じて自動で発火します。「ADR を書いて」のように明示的に依頼しても発火します。
+
+1. ADR の置き場を初期化します。「ADR 管理を始めたい」と依頼すると `adr-init` が発火し、Sphinx プロジェクトの配下に ADR セクションを用意します。
+2. 決定を ADR に記録します。design spec を書いた直後や、代替案を伴う設計判断が確定した場面で `adr-author` が発火します。「ADR を書いて」と明示依頼してもかまいません。
+3. 提示された ADR 案に合意します。`adr-author` は ADR 案をプレビューとして提示し、承認を求めます。承認の後にだけファイルが生成されます。
+4. ステータスを進めたり、別の ADR で置き換えたりします。「ADR-0003 を Accepted にして」のように依頼すると、同じく提示と合意を経て反映されます。
+
+各スキルの発火条件・モード・ワークフローの詳細は [docs/usage.md](docs/usage.md) を参照してください。
+
+本パッケージ自身の設計決定も、これらのスキルで [docs/adr/](docs/adr/) に記録しています。実際の ADR の書き方の例として参照できます。
+
+## ADR の運用方針
+
+本パッケージは次の運用を前提に設計しています。スクリプトとスキルの挙動もこの方針に沿います。
+
+- 1 つの ADR には 1 つの決定だけを記録します。独立した決定が複数あるときは ADR を分けます。
+- Accepted になった ADR はそのまま残し、内容は書き換えません。方針を変えるときは新しい ADR を起こして supersede します。
+- 採用した案だけでなく、検討して見送った案とその理由、トレードオフも記録します。
+- ステータスは前進方向にのみ動かします。`set_status.py` が許可する遷移は `Proposed → Accepted`、`Proposed → Deprecated`、`Accepted → Deprecated` です。`Superseded` は別の ADR で置き換えるときに `supersede` 操作で付与します。
