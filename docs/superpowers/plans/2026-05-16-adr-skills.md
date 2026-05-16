@@ -1136,16 +1136,25 @@ adr/index
 ```
 ```
 
-- [ ] **Step 5: Sphinx ビルドで警告が出ないことを確認**
+- [ ] **Step 5: Sphinx ビルドが成功することを確認**
 
-Run: `cd docs && uv run sphinx-build -W -b html . _build/html && cd ..`
-Expected: 警告ゼロでビルド成功（`-W` で警告をエラー化）。ADR ファイルがまだ無いため `index` の toctree は空でよい。
+Run: `uv run --group docs sphinx-build -b html docs docs/_build/html`
+Expected: exit 0 でビルド成功。ADR ファイルがまだ無いため `adr/index` の glob toctree は空マッチ警告を 1 件出すが、これは致命ではない。ここでは `-W` を付けない（空 ADR セクションでは glob が必ず空マッチ警告を出すため）。厳格な `-W` ビルドは Task 11（ADR 起票後・glob が非空）で行う。空マッチ警告以外の理由で失敗する場合は握りつぶさず調査する。
 
 - [ ] **Step 6: コミット**
 
 ```bash
 git add docs/adr/index.md docs/adr/_templates/adr_template.md docs/conf.py docs/index.md
 git commit -m "docs: bootstrap docs/adr section (dogfooding)"
+```
+
+- [ ] **Step 7: `adr-init` スキルに空 ADR セクションの注記を追加**
+
+出荷物 `adr-init` も、空の ADR セクションに `-W` ビルドすると同じ glob 空マッチ警告が出る。`skills/adr-init/SKILL.md` の「共通」セクションに「ADR が 1 件も無い状態で `sphinx-build -W` を実行すると glob toctree が空マッチ警告を出す。最初の ADR を起票すれば解消する」旨の一文を追加し、別コミットする。
+
+```bash
+git add skills/adr-init/SKILL.md
+git commit -m "docs: note empty-ADR -W build warning in adr-init skill"
 ```
 
 ---
