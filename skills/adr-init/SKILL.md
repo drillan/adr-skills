@@ -109,3 +109,4 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "adr/_templates"]
 - ADR ファイル本体（`NNNN-<slug>.md`）と `index.md` の構造は両モードで共通。`adr-author` スキルはこの共通構造に対して動作する。
 - 完了後、`adr-author` スキルで最初の ADR を起票できる旨をユーザーに案内する。
 - Sphinx のビルド・テーマ運用には `sphinx-skills`（drillan/sphinx-skills）が利用可能である旨を案内する（ハード依存ではなく参考案内）。
+- ADR が 1 件も無い状態で `sphinx-build -W`（警告をエラー化）を実行すると、`adr/index.md` の glob toctree（`[0-9][0-9][0-9][0-9]-*`）が空マッチ警告を出しビルドが失敗する。これは初期化直後の想定内の挙動であり、`adr-author` で最初の ADR を起票すれば解消する。最初の ADR を起票するまでは `-W` なしでビルドする。
