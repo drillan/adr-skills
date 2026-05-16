@@ -111,3 +111,23 @@ def next_number(adr_dir: Path) -> str:
         if (m := ADR_FILENAME_RE.match(p.name))
     ]
     return f"{(max(numbers) + 1) if numbers else 1:04d}"
+
+
+def find_adr(adr_dir: Path, number: str) -> Path:
+    """番号に対応する ADR ファイルパスを返す。無ければ AdrError。"""
+    matches = sorted(adr_dir.glob(f"{number}-*.md"))
+    if not matches:
+        raise AdrError(f"ADR-{number} が {adr_dir} に見つかりません。")
+    if len(matches) > 1:
+        raise AdrError(f"ADR-{number} が複数あります: {[p.name for p in matches]}")
+    return matches[0]
+
+
+def read_adr(path: Path) -> tuple[Frontmatter, str]:
+    """path を読み込み (Frontmatter, body) を返す。body は先頭 '\n' を含む。"""
+    return parse_frontmatter(path.read_text(encoding="utf-8"))
+
+
+def write_adr(path: Path, fm: Frontmatter, body: str) -> None:
+    """Frontmatter と body をファイルへ書き戻す。body は先頭 '\n' を含む前提。"""
+    path.write_text(dump_frontmatter(fm) + "\n" + body, encoding="utf-8")
