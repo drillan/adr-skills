@@ -14,3 +14,11 @@ jobs:
       - run: uv run ruff format --check .
       - run: uv run mypy .
       - run: uv run pytest -v
+
+  apm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: microsoft/apm-action@v1
+        with:
+          pack: true
