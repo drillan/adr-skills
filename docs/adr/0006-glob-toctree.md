@@ -1,7 +1,7 @@
 ---
 adr: "0006"
 title: "ADR 索引の toctree は glob で自動収集する"
-status: Proposed
+status: Accepted
 date: 2026-05-16
 deciders:
   - driller

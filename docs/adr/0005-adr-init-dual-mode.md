@@ -1,7 +1,7 @@
 ---
 adr: "0005"
 title: "adr-init をセクション追加 / スタンドアロンの 2 モードにする"
-status: Proposed
+status: Accepted
 date: 2026-05-16
 deciders:
   - driller

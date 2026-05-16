@@ -1,7 +1,7 @@
 ---
 adr: "0002"
 title: "第 1 層を CLI でなくスキル同梱スクリプトで実装する"
-status: Proposed
+status: Accepted
 date: 2026-05-16
 deciders:
   - driller

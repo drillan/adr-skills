@@ -1,7 +1,7 @@
 ---
 adr: "0001"
 title: "決定的処理と起草を 2 層に分離する"
-status: Proposed
+status: Accepted
 date: 2026-05-16
 deciders:
   - driller
