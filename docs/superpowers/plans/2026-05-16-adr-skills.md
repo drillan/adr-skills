@@ -119,7 +119,7 @@ git commit -m "chore: scaffold adr-skills package metadata"
 ## Task 2: ADR テンプレートと adr-init スタンドアロンテンプレート
 
 **Files:**
-- Create: `skills/adr-init/templates/adr_template.md`
+- Create: `skills/adr-init/templates/_templates/adr_template.md`
 - Create: `skills/adr-init/templates/index.md`
 - Create: `skills/adr-init/templates/conf.py`
 - Create: `skills/adr-init/templates/Makefile`
@@ -1075,12 +1075,12 @@ allowed-tools: Bash, Read, Write, Edit, Glob
 - **セクション追加モード**（既存 `conf.py` あり）:
   1. ADR セクションディレクトリ `<sphinx-root>/adr/` を作る。
   2. `templates/index.md` を `<sphinx-root>/adr/index.md` として配置（glob toctree 付き）。
-  3. `templates/adr_template.md` を `<sphinx-root>/adr/_templates/adr_template.md` として配置。
+  3. `templates/_templates/adr_template.md` を `<sphinx-root>/adr/_templates/adr_template.md` として配置。
   4. 親 `index.md` の `{toctree}` に `adr/index` を 1 度だけ追加（既にあれば何もしない）。
   5. 親 `conf.py` の `exclude_patterns` に `'adr/_templates'` を追加（無ければ）。`myst_parser` が `extensions` に無ければ `sphinx-config` スキルでの追加を提案する。
 - **スタンドアロンモード**（既存 Sphinx プロジェクトなし）:
   1. 配置先を決める（既定 `docs/adr/`、ユーザー指定で上書き可）。
-  2. `templates/` の全ファイル（`conf.py` / `index.md` / `Makefile` / `make.bat` / `_static/`）を配置先へコピーし、`_templates/adr_template.md` も配置。
+  2. `templates/` ツリー全体（`conf.py` / `index.md` / `Makefile` / `make.bat` / `_static/` / `_templates/adr_template.md`）をそのまま配置先へコピーする。
   3. `conf.py` の `{{PROJECT}}` / `{{AUTHOR}}` を埋める。
 - **共通**: 完了後、`adr-author` で最初の ADR を起票できる旨を案内する。Sphinx のビルド・テーマ運用は `sphinx-skills` を案内する（ハード依存にしない）。
 
@@ -1109,7 +1109,7 @@ git commit -m "feat: add adr-init skill"
 
 - [ ] **Step 2: `docs/adr/_templates/adr_template.md` を配置**
 
-`skills/adr-init/templates/adr_template.md` の内容をそのまま `docs/adr/_templates/adr_template.md` にコピーする。
+`skills/adr-init/templates/_templates/adr_template.md` の内容をそのまま `docs/adr/_templates/adr_template.md` にコピーする。
 
 - [ ] **Step 3: `docs/conf.py` の `exclude_patterns` を更新**
 
