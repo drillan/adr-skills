@@ -697,14 +697,16 @@ def find_adr(adr_dir: Path, number: str) -> Path:
 
 
 def read_adr(path: Path) -> tuple[Frontmatter, str]:
+    """path を読み込み (Frontmatter, body) を返す。body は先頭 '\n' を含む。"""
     return parse_frontmatter(path.read_text(encoding="utf-8"))
 
 
 def write_adr(path: Path, fm: Frontmatter, body: str) -> None:
-    path.write_text(dump_frontmatter(fm) + body, encoding="utf-8")
+    """Frontmatter と body をファイルへ書き戻す。body は先頭 '\n' を含む前提。"""
+    path.write_text(dump_frontmatter(fm) + "\n" + body, encoding="utf-8")
 ```
 
-注: `parse_frontmatter` は本文を先頭の `\n` 込みで返すため、`write_adr` は `dump_frontmatter(fm) + body` で元の体裁を保つ。
+注: `parse_frontmatter` が消費する `\n---\n` の最後の `\n` は区切りであり、`body` 先頭の `\n` は本文側の改行。`dump_frontmatter` は末尾に改行を持たないため、`write_adr` は `dump_frontmatter(fm) + "\n" + body` と明示的に改行を挟む。これは冪等であり、`---` フェンスと本文の間の空行を保つ。
 
 - [ ] **Step 4: `set_status.py` を実装**
 
