@@ -1,0 +1,3 @@
+name: adr-skills
+version: 0.1.0
+description: ADR (Architecture Decision Record) を合意ベースで起草・管理するスキル集 (2 個)。ADR プロジェクトの初期化と、決定の検知・提案・記録をカバーする。

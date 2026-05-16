@@ -1,0 +1,31 @@
+[project]
+name = "adr-skills"
+version = "0.1.0"
+description = "ADR を合意ベースで起草・管理するスキルパッケージ"
+requires-python = ">=3.13"
+dependencies = []
+
+[dependency-groups]
+docs = [
+    "linkify-it-py>=2.1.0",
+    "myst-parser>=5.1.0",
+    "shibuya>=2026.1.9",
+    "sphinx>=9.1.0",
+    "sphinx-autobuild>=2025.8.25",
+    "sphinx-copybutton>=0.5.2",
+    "sphinx-design>=0.7.0",
+    "sphinx-oceanid>=0.2.0",
+]
+dev = ["pytest>=8", "ruff>=0.6", "mypy>=1.11"]
+
+[tool.pytest.ini_options]
+pythonpath = ["skills/adr-author/scripts"]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py313"
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+files = ["skills/adr-author/scripts", "tests"]
