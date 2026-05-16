@@ -64,6 +64,13 @@ adr-skills/
 │   └── adr-author/
 │       ├── SKILL.md
 │       └── scripts/              # create_adr.py / set_status.py / supersede.py / check_adr.py
+├── docs/                         # adr-skills 自身の doc サイト + ADR（ドッグフーディング）
+│   ├── conf.py
+│   ├── index.md
+│   └── adr/                      # adr-skills 自身の ADR セクション
+│       ├── index.md
+│       ├── _templates/adr_template.md
+│       └── NNNN-*.md
 ├── tests/                        # スクリプトの TDD テスト（配布対象外・CI で実行）
 └── .github/workflows/            # lint / test / skill 検証
 ```
@@ -86,10 +93,11 @@ APM の skill bundle は「the entire directory is copied to `<target>/skills/<n
 
 ### `adr-init` スキル
 
-対象リポジトリに ADR 用 Sphinx プロジェクトを生成する。
+対象リポジトリに ADR の置き場を用意する。既存 Sphinx プロジェクトの有無で 2 モードに分岐する。
 
-- 配置先ディレクトリを決定する。既定は `docs/adr/`（adr.github.io 推奨の標準。superpowers の `docs/superpowers/specs/` と同じ `docs/` ツリーに隣接する）。自動検出: `references/` 系の分類ディレクトリが既にあれば `references/adr/`。ユーザー指定で上書き可。
-- `templates/` から `conf.py` / `index.md` / `_templates/adr_template.md` / `Makefile` / `make.bat` / `_static/` を配置し、プロジェクト名等のメタデータを埋める。ADR 用 Sphinx の標準構成（`myst_parser` + `sphinx_oceanid` + `shibuya` テーマ + 日本語 LaTeX）。
+- **セクション追加モード**（既存 `conf.py` を検出した場合）: その Sphinx プロジェクト配下に ADR セクション `<sphinx-root>/adr/` を作る。`index.md`（ADR セクションの目次）と `_templates/adr_template.md` を配置し、親プロジェクトの `index.md` の toctree に `adr/index` を 1 度だけ組み込む。`conf.py` は新設せず親のものを再利用する。親 `conf.py` に `myst_parser` が無ければ `sphinx-config` スキルでの追加を提案する。
+- **スタンドアロンモード**（既存 Sphinx プロジェクトが無い場合）: ADR 専用の Sphinx プロジェクトを新規生成する。配置先の既定は `docs/adr/`（ユーザー指定で上書き可）。`templates/` から `conf.py` / `index.md` / `_templates/adr_template.md` / `Makefile` / `make.bat` / `_static/` を配置し、プロジェクト名等のメタデータを埋める。ADR 用 Sphinx の標準構成（`myst_parser` + `sphinx_oceanid` + `shibuya` テーマ + 日本語 LaTeX）。
+- いずれのモードでも、ADR ファイル本体（`NNNN-*.md`）と `index.md` の構造は共通。第 1 層スクリプトはこの共通構造に対して動作する。
 - Sphinx のビルド・テーマ運用は `sphinx-skills` をソフト参照（README で案内、ハード依存にしない）。
 - 発火条件（description）: 「ADR 管理を始めたい」「ADR を初期化」等。
 
@@ -162,6 +170,14 @@ adr-author スキル（発火）
 ## スキル構成
 
 2 スキル構成（`adr-init` / `adr-author`）。supersede・status 昇格は `adr-author` + 同梱スクリプトでカバーする。lifecycle 専用スキルは設けない。
+
+## 開発方針：ドッグフーディング
+
+adr-skills 自身のアーキテクチャ決定を、本パッケージが推奨する ADR 規約で `docs/adr/`（既存 `docs/` Sphinx プロジェクト内のセクション）に記録しながら開発する。本ブレストで確定した決定（2 層モデル、`adr` CLI 不採用、hook 不採用、vendoring 不採用、ADR 配置のセクション追加モード 等）が最初の ADR 群になる。
+
+- テンプレート・規約・スクリプトを「自分のリポジトリで通用するか」で継続的に検証でき、利用者への実例にもなる。
+- ブートストラップ: `scripts/create_adr.py` が未完成の段階では、最初の ADR はテンプレートから手動で起こす。これがテンプレートの最初のテストになる。スクリプト完成後は以降の ADR 起票・status 操作をスクリプトで行う。
+- ここに記録するのは adr-skills 自身の決定であり機密ではない。機密保持の不変条件は他者プロジェクトの決定内容に対するものであり、自プロジェクトの決定記録とは区別する。
 
 ## YAGNI（対象外）
 
