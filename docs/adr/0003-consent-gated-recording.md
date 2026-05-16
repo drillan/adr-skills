@@ -1,7 +1,7 @@
 ---
 adr: "0003"
 title: "ADR 記録は合意ゲートを必須とし発火はスキル description で行う"
-status: Proposed
+status: Accepted
 date: 2026-05-16
 deciders:
   - driller

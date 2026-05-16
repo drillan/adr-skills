@@ -1,7 +1,7 @@
 ---
 adr: "0004"
 title: "第 1 層スクリプトを利用側リポジトリへ vendoring しない"
-status: Proposed
+status: Accepted
 date: 2026-05-16
 deciders:
   - driller
