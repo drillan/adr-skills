@@ -1,5 +1,8 @@
 from pathlib import Path
 
+import pytest
+
+from adrlib import AdrError
 from check_adr import find_unrecorded_specs
 
 
@@ -30,3 +33,15 @@ def test_find_unrecorded_specs_empty_when_all_recorded(tmp_path: Path) -> None:
         "# ADR\n- spec: docs/superpowers/specs/2026-01-01-alpha-design.md\n",
     )
     assert find_unrecorded_specs(adr_dir=adr_dir, specs_dir=specs_dir) == []
+
+
+def test_find_unrecorded_specs_raises_on_missing_specs_dir(tmp_path: Path) -> None:
+    with pytest.raises(AdrError):
+        find_unrecorded_specs(adr_dir=tmp_path, specs_dir=tmp_path / "nope")
+
+
+def test_find_unrecorded_specs_raises_on_missing_adr_dir(tmp_path: Path) -> None:
+    specs_dir = tmp_path / "specs"
+    specs_dir.mkdir()
+    with pytest.raises(AdrError):
+        find_unrecorded_specs(adr_dir=tmp_path / "nope", specs_dir=specs_dir)

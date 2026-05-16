@@ -6,16 +6,21 @@ import argparse
 import sys
 from pathlib import Path
 
+from adrlib import AdrError
+
 
 def find_unrecorded_specs(*, adr_dir: Path, specs_dir: Path) -> list[Path]:
     """どの ADR からも参照されていない design spec を返す。"""
+    if not specs_dir.is_dir():
+        raise AdrError(f"specs ディレクトリが見つかりません: {specs_dir}")
+    if not adr_dir.is_dir():
+        raise AdrError(f"ADR ディレクトリが見つかりません: {adr_dir}")
     referenced: set[str] = set()
-    if adr_dir.is_dir():
-        for adr in adr_dir.glob("[0-9][0-9][0-9][0-9]-*.md"):
-            text = adr.read_text(encoding="utf-8")
-            for spec in specs_dir.glob("*-design.md"):
-                if spec.name in text:
-                    referenced.add(spec.name)
+    for adr in adr_dir.glob("[0-9][0-9][0-9][0-9]-*.md"):
+        text = adr.read_text(encoding="utf-8")
+        for spec in specs_dir.glob("*-design.md"):
+            if spec.name in text:
+                referenced.add(spec.name)
     unrecorded = [
         spec
         for spec in sorted(specs_dir.glob("*-design.md"))
